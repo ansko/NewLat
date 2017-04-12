@@ -44,7 +44,10 @@ masses = masses_comp
 
 def phase_distr(filenum = 49, multiplier = 10):
     """builds components density profile"""
-    foldernames = ['/media/anton/Seagate Expansion Drive/Article-MMT/Cluster calculations for article/BiggerSystems/Comp/10chains/2.2 - More relaxation 500 (wiggle)/1799293 - wiggle2/']
+    foldernames = ['/media/anton/Seagate Expansion Drive/Article-MMT/' +
+                   'Cluster calculations for article/BiggerSystems/' + 
+                   'Comp/10chains/2.2 - More relaxation 500 (wiggle)/' +
+                   '1799293 - wiggle2/']
 
     distr = [[ 0, # all 
                0, # mmt
@@ -59,18 +62,20 @@ def phase_distr(filenum = 49, multiplier = 10):
             fname = foldername + '/co.' + str((j*50 + 0)*1000) + '.data'
             (atoms, bounds, bonds, angles) = lat.read_atoms.read_atoms(fname)
             for i in range(len(atoms)):
-                distr[int(5000 + multiplier * atoms[i][6])][0] += masses[atoms[i][2]] * 1.66
-                #distr[int(250 + multiplier * atoms[i][6])][lat.define_phase.define_phase(len(atoms), i + 1)] += 1
-                distr[int(5000 + multiplier * atoms[i][6])][1] += masses[atoms[i][2]] * 1.66
+                z = int(5000 + multiplier * atoms[i][6])
+                distr[z][0] += masses[atoms[i][2]] * 1.66
+                distr[z][1] += masses[atoms[i][2]] * 1.66
 
+    lx = bounds[1] - bounds[0]
+    ly = bounds[3] - bounds[2]
     for i in range(len(distr)):
-        #if distr[i][0] > 0:
+        if distr[i][0] > 0:
             new_distr.append([(i - 5000) / multiplier,
-                              multiplier * distr[i][0] / 50 / (bounds[1] - bounds[0]) / (bounds[3] - bounds[2]),
-                              multiplier * distr[i][1] / 50 / (bounds[1] - bounds[0]) / (bounds[3] - bounds[2]),
-                              multiplier * distr[i][2] / 50 / (bounds[1] - bounds[0]) / (bounds[3] - bounds[2]),
-                              multiplier * distr[i][3] / 50 / (bounds[1] - bounds[0]) / (bounds[3] - bounds[2]),
-                              multiplier * distr[i][4] / 50 / (bounds[1] - bounds[0]) / (bounds[3] - bounds[2])])
+                              multiplier * distr[i][0] / 50 / lx / ly,
+                              multiplier * distr[i][1] / 50 / lx / ly,
+                              multiplier * distr[i][2] / 50 / lx / ly,
+                              multiplier * distr[i][3] / 50 / lx / ly,
+                              multiplier * distr[i][4] / 50 / lx / ly])
 
     for i in range(len(new_distr)):
         for j in range(len(new_distr[i])):
